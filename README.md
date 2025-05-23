@@ -43,12 +43,13 @@ A responsive full-stack **Expense Management Web App** built with **Next.js**, *
     npm run dev
 
 ### ScreenShots
-
-![Screenshot (43)](https://github.com/user-attachments/assets/28f167a2-0d54-4c51-b18b-bd85d548620f)
 ![Screenshot (42)](https://github.com/user-attachments/assets/5aa67892-8fd3-4fa7-912a-515d89c7ec95)
-![Screenshot (48)](https://github.com/user-attachments/assets/3dcfd647-64e7-48fa-a9ed-21a3c6d89938)
-![Screenshot (47)](https://github.com/user-attachments/assets/1ce790ad-8e42-47f7-80d7-e150ab3241ee)
-![Screenshot (46)](https://github.com/user-attachments/assets/6283f71b-9efd-4a49-810b-9a2abbc76a99)
+![Screenshot (44)](https://github.com/user-attachments/assets/cfd38e57-cf25-4f0b-afc1-8e0eeb95fcaa)
+![Screenshot (43)](https://github.com/user-attachments/assets/28f167a2-0d54-4c51-b18b-bd85d548620f)
 ![Screenshot (45)](https://github.com/user-attachments/assets/bca51490-4233-4032-a6ee-c666ff7bda35)
+![Screenshot (46)](https://github.com/user-attachments/assets/6283f71b-9efd-4a49-810b-9a2abbc76a99)
+![Screenshot (47)](https://github.com/user-attachments/assets/1ce790ad-8e42-47f7-80d7-e150ab3241ee)
+![Screenshot (48)](https://github.com/user-attachments/assets/3dcfd647-64e7-48fa-a9ed-21a3c6d89938)
+
 
   

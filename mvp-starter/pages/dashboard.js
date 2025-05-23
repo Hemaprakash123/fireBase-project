@@ -64,6 +64,7 @@ export default function Dashboard() {
   const [isLoadingReceipts, setIsLoadingReceipts] = useState(true);
   const [deleteReceiptId, setDeleteReceiptId] = useState("");
   const [deleteReceiptImageBucket, setDeleteReceiptImageBucket] = useState("");
+  const [receipts,setReceipts]=useState([])
   const [updateReceipt, setUpdateReceipt] = useState({});
 
   // State involved in snackbar
@@ -76,13 +77,26 @@ export default function Dashboard() {
     setSnackbarMessage(isSuccess ? SUCCESS_MAP[receiptEnum] : ERROR_MAP[receiptEnum]);
     isSuccess ? setSuccessSnackbar(true) : setErrorSnackbar(true);
     setAction(RECEIPTS_ENUM.none);
+    // if(isSuccess){
+    //   setReceipts(await getReceipts(authUser.uid))
+    // }
   }
 
   // Listen to changes for loading and authUser, redirect if needed
   useEffect(() => {
+    if(!isLoading && !authUser){
+      router.push('/')
+    }
   }, [authUser, isLoading]);
 
   // For all of the onClick functions, update the action and fields for updating
+
+  useEffect(async ()=>{
+    if(authUser){
+      const unsubscribe=await getReceipts(authUser.uid,setReceipts,setIsLoadingReceipts);
+      return ()=>unsubscribe();
+    }
+  },[authUser])
 
   const onClickAdd = () => {
     setAction(RECEIPTS_ENUM.add);
@@ -105,7 +119,26 @@ export default function Dashboard() {
     setDeleteReceiptId("");
   }
 
-  return (
+  const onDelete = async () => {
+  let isSuceed = true;
+  try {
+    await deleteReceipt(deleteReceiptId);  // 🔧 Fix: use deleteReceiptId
+    if (deleteReceiptImageBucket) {
+      await deleteImage(deleteReceiptImageBucket);
+    }
+  } catch (error) {
+    console.log(error);
+    isSuceed = false;
+  }
+
+  resetDelete();
+  onResult(RECEIPTS_ENUM.delete, isSuceed);
+}
+
+
+   return (!authUser?
+  <CircularProgress color='inherit' sx={{marginLeft:'50%',marginTop:'25%'}}/>
+  :
     <div>
       <Head>
         <title>Expense Tracker</title>
@@ -129,6 +162,16 @@ export default function Dashboard() {
             <AddIcon />
           </IconButton>
         </Stack>
+        {
+          receipts.map((receipt)=>(
+            <div key={receipt.id}>
+              <Divider light />
+              <ReceiptRow receipt={receipt}
+                          onEdit={()=>onUpdate(receipt)}
+                          onDelete={()=>onClickDelete(receipt.id,receipt.imageBucket)}/>
+            </div>
+          ))
+        }
       </Container>
       <ExpenseDialog edit={updateReceipt}
                      showDialog={action === RECEIPTS_ENUM.add || action === RECEIPTS_ENUM.edit}
@@ -145,7 +188,7 @@ export default function Dashboard() {
           <Button color="secondary" variant="outlined" onClick={resetDelete}>
               Cancel
           </Button>
-          <Button color="secondary" variant="contained" autoFocus>
+          <Button color="secondary" variant="contained" autoFocus onClick={onDelete}>
               Delete
           </Button>
         </DialogActions>

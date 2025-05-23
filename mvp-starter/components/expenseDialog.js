@@ -22,8 +22,9 @@ import DatePicker from '@mui/lab/DatePicker';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { useAuth } from '../firebase/auth';
 import { addReceipt, updateReceipt } from '../firebase/firestore';
-import { replaceImage, uploadImage } from '../firebase/storage';
+import {replaceImage, uploadImage } from '../firebase/storage';
 import { RECEIPTS_ENUM } from '../pages/dashboard';
+import {bucket} from '../firebase/storage'
 import styles from '../styles/expenseDialog.module.scss';
 
 const DEFAULT_FILE_NAME = "No file selected";
@@ -53,6 +54,7 @@ export default function ExpenseDialog(props) {
   const isEdit = Object.keys(props.edit).length > 0;
   const [formFields, setFormFields] = useState(isEdit ? props.edit : DEFAULT_FORM_STATE);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const {authUser}=useAuth();
 
   // If the receipt to edit or whether to close or open the dialog ever changes, reset the form fields
   useEffect(() => {
@@ -81,7 +83,27 @@ export default function ExpenseDialog(props) {
     setIsSubmitting(false);
     props.onCloseDialog();
   }
-
+  const handleSubmit=async()=>{
+    setIsSubmitting(true);
+    try {
+      if(isEdit){
+        if(formFields.fileName){
+          await replaceImage(formFields.file,formFields.imageBucket);
+        }
+        await updateReceipt(formFields.id,authUser.uid,formFields.date,formFields.locationName,formFields.address,formFields.items,formFields.amount,formFields.imageBucket)
+      }
+      else{
+        const bucket=await uploadImage(formFields.file,authUser.uid);
+        await addReceipt(authUser.uid,formFields.date,formFields.locationName,formFields.address,formFields.items,formFields.amount,bucket)
+      }
+      
+      props.onSuccess(isEdit ? RECEIPTS_ENUM.edit : RECEIPTS_ENUM.add);
+    } catch (error) {
+      props.onError(isEdit ? RECEIPTS_ENUM.edit : RECEIPTS_ENUM.add);
+      console.log(error);
+    }
+    closeDialog();
+  }
   return (
     <Dialog classes={{paper: styles.dialog}}
       onClose={() => closeDialog()}
@@ -122,7 +144,7 @@ export default function ExpenseDialog(props) {
           <Button color="secondary" variant="contained" disabled={true}>
             Submitting...
           </Button> :
-          <Button color="secondary" variant="contained" disabled={isDisabled()}>
+          <Button color="secondary" variant="contained" disabled={isDisabled()} onClick={handleSubmit}>
             Submit
           </Button>}
       </DialogActions>

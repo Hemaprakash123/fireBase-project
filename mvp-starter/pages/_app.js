@@ -21,12 +21,16 @@ import { ThemeProvider } from '@mui/material/styles';
 import { theme } from '../styles/theme.js';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { AuthUserProvider } from '../firebase/auth.js';
 
 export default function App({ Component, pageProps }) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <ThemeProvider theme={theme}>
-        <Component {...pageProps} />
-      </ThemeProvider>
-    </LocalizationProvider>);
+      <AuthUserProvider>
+        <ThemeProvider theme={theme}>
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </AuthUserProvider>
+    </LocalizationProvider>
+    );
 }

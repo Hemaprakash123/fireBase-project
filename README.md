@@ -52,4 +52,5 @@ A responsive full-stack **Expense Management Web App** built with **Next.js**, *
 ![Screenshot (48)](https://github.com/user-attachments/assets/3dcfd647-64e7-48fa-a9ed-21a3c6d89938)
 
 
-  
+
+  deployed Link:https://project-cost-tracker-8f62f.web.app/
